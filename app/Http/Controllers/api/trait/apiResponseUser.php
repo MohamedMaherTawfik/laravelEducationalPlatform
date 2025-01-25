@@ -1,28 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API;
-
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller as Controller;
+namespace App\Http\Controllers\API\trait;
 
 trait apiResponseUser
 {
-    /**
-     * success response method.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function sendResponse($result, $message)
+    public function apiResponse($result=null, $message=null,$status=null)
     {
-    	$response = [
+        $array = [
             'success' => true,
             'data'    => $result,
             'message' => $message,
         ];
-
-        return response()->json($response, 200);
+        return response($array);
     }
-
 
     public function sendError($error, $errorMessages = [], $code = 404)
     {

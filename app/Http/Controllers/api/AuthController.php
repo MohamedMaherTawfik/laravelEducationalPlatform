@@ -2,36 +2,24 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\API\BaseController as BaseController;
+use App\Http\Controllers\API\trait\apiResponseUser;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\userRequest;
 use App\Models\User;
-use App\trait\apiResponse;
-use Validator;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     use apiResponseUser;
+    public function register(userRequest $request) {
 
-    public function register(Request $request) {
+        $fields=$request->validated();
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-        ]);
-
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
-        $input = $request->all();
+        $input = $fields;
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['user'] =  $user;
 
-        return $this->sendResponse($success, 'User register successfully.');
+        return $this->apiResponse($success, 'User register successfully.',200);
     }
 
 
@@ -40,33 +28,33 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            return $this->apiResponse(null, 'Unauthorised.',401);
         }
 
         $success = $this->respondWithToken($token);
 
-        return $this->sendResponse($success, 'User login successfully.');
+        return $this->apiResponse($success, 'User login successfully.',200);
     }
 
     public function profile()
     {
         $success = auth()->user();
 
-        return $this->sendResponse($success, 'Refresh token return successfully.');
+        return $this->apiResponse($success, 'Refresh token return successfully.',200);
     }
 
     public function logout()
     {
         auth()->logout();
 
-        return $this->sendResponse([], 'Successfully logged out.');
+        return $this->apiResponse([], 'Successfully logged out.',200);
     }
 
     public function refresh()
     {
         $success = $this->respondWithToken(auth()->refresh());
 
-        return $this->sendResponse($success, 'Refresh token return successfully.');
+        return $this->apiResponse($success, 'Refresh token return successfully.',200);
     }
 
     protected function respondWithToken($token)

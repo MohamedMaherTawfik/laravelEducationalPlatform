@@ -11,7 +11,7 @@ class lessonRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class lessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|min:3|max:30',
+            'video' => 'required|min:3|max:30',
+            'course_managament_id'=> 'required',
+            'content'=> 'required',
+            'duration'=> 'required',
         ];
     }
 }

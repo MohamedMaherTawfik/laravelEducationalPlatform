@@ -11,7 +11,7 @@ class quizRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class quizRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title'=> 'required|min:3|max:30',
+            'description'=> 'required|min:3|max:30',
+            'number_of_questions'=> 'required',
+            'passing_score'=> 'required',
+            'total_marks'=> 'required',
         ];
     }
 }

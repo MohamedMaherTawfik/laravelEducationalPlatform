@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->enum('status',['active','inactive'])->default('active');
             $table->string('phone');
-            $table->string('grade');
+            $table->string('educational_stage');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

@@ -19,7 +19,7 @@ class categoreyRepository
 
     public function update($data)
     {
-        categorey::find($data['id'])->update($data);
+        categorey::update($data);
     }
 
     public function delete()
@@ -29,6 +29,6 @@ class categoreyRepository
 
     public function find()
     {
-        return categorey::find(request('id'));
+        return categorey::find(request());
     }
 }

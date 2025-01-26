@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\categoreyRequest;
+use App\Models\categorey;
 use App\Repository\categoreyRepository;
 use App\Http\Controllers\api\apiResponse;
 
@@ -39,13 +40,23 @@ class categoreyServices
     public function update(categoreyRequest $request)
     {
         $data=$request->validated();
-        $this->categoreyRepository->update($data);
+        if($request->hasFile('image')) {
+            $file=$request->file('image');
+            $filename=time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('categories'),$filename);
+            $data['image']=$filename;
+        }
+        $this->categoreyRepository->find()->update($data);
         return $this->apiResponse($data, 'Category updated successfully.',200);
     }
 
     public function destroy()
     {
-        $this->categoreyRepository->delete();
+        $category=$this->categoreyRepository->find();
+        if(!$category) {
+            return $this->apiResponse([], 'Category not found.',404);
+        }
+        $category->delete();
         return $this->apiResponse([], 'Category deleted successfully.',200);
     }
 
@@ -57,8 +68,7 @@ class categoreyServices
 
     public function courses()
     {
-        $data=$this->categoreyRepository->find();
-        $data=$data->courses;
+        $data=categorey::with('courseManagment')->find(request('id'));
         return $this->apiResponse($data, 'Courses found successfully.',200);
     }
 }
